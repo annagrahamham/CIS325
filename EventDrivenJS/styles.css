@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #b0dbfa;
+    gap: 20px;
+}
+button {
+    font-size: 16px;
+    background-color: #b8f4a5;
+    color: white;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 50px 50px;
+}
+button:hover {
+    font-size: 16px;
+    background-color:  #9ad787;
+    color: white;
+    border:none;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 50px 50px;
+}
+
+#image {
+    display: block;
+    border-radius: 10px;
+}
