@@ -10,15 +10,19 @@
         <h1>Demographics</h1>
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name ="firstName">
+        <small id="fnameError" class="error-message"></small>
         <br>
         <label for="lastName">Last Name:</label>
         <input type="text" id="lastName" name ="lastName">
+        <small id="lnameError" class="error-message"></small>
         <br>
         <label for="age">Age:</label> 
         <input type="number" id="age" name ="age">
+         <small id="ageError" class="error-message"></small>
         <br>
         <label for="email">Email:</label>
         <input type="email" id="email" name ="email">
+         <small id="emailError" class="error-message"></small>
         <br>
         <label for="gender">Gender:</label>
         <input type="text" id="gender" name ="gender">
@@ -26,11 +30,24 @@
         <label for="city">City:</label>
         <input type="text" id="city" name ="city">
         <br>
-        <button type="button" onclick="submitInfo()">Submit Info</button>
+        <button type="submit" >Submit Info</button>
 </form>
+
+<h2>Demographics Records</h2>
+<table id="DemoRecords" border="2">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>City</th>
+    </tr>
+    </thead>    
+    <tbody id ="tableData"></tbody>
+</table>
 <script>
-    //add validation to the form
-    //list records on page
     function submitInfo(){
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
@@ -38,16 +55,14 @@
         const email = document.getElementById('email').value;
         const gender = document.getElementById('gender').value;
         const city = document.getElementById('city').value;
-        fetch('/demographics', {
+        fetch('/api/demographics', {
             method:'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: `firstName=${firstName}&lastName=${lastName}&age=${age}&email=${email}&gender=${gender}&city=${city}`,
         })
         .then(response => response.json())
         .then(data =>{
-            if(data.success) {
+            if(data.id) {
                 alert('Demographics information submitted successfully.');
             }else{
                 alert('Failed to submit demographics information.');
@@ -57,6 +72,69 @@
             console.error('Error:', err);
         })
     }
+    //form validation
+document.addEventListener('DOMContentLoaded', function() {
+    listRecords();
+    const info = document.getElementById('demographicsPage')
+    info.addEventListener('submit', function(event){
+        event.preventDefault();
+        let isValid = true;
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const age = document.getElementById('age').value;
+    const email = document.getElementById('email').value;
+        
+    document.getElementById('fnameError').innerText = '';
+    document.getElementById('lnameError').innerText = '';
+    document.getElementById('ageError').innerText = '';
+    document.getElementById('emailError').innerText = '';
+
+    if (firstName.trim() === '') {
+      document.getElementById('fnameError').innerText = 'First name is required.';
+      isValid = false;
+    }
+    if (lastName.trim() === '') {
+      document.getElementById('lnameError').innerText = 'Last name is required.';
+      isValid = false;
+    }
+    if (age <= 0) {
+      document.getElementById('ageError').innerText = 'Age must be positive';
+      isValid = false;
+    }
+    const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    if (!emailPattern.test(email)) {
+      document.getElementById('emailError').innerText = 'Invalid email.';
+      isValid = false;
+    }
+
+    if (isValid) {
+     submitInfo();
+     }
+    })
+})
+//list records on page
+function listRecords() {
+    fetch('/api/demographics')
+    .then(response => response.json())
+    .then(records => {
+        const tableData = document.getElementById('tableData');
+        
+        records.forEach(record => {
+            const row= document.createElement('tr');
+            row.innerHTML =`
+                <td>${record.firstName}</td>
+                <td>${record.lastName}</td>
+                <td>${record.age}</td>
+                <td>${record.email}</td>
+                <td>${record.gender}</td>
+                <td>${record.city}</td>`;
+      
+        tableData.appendChild(row);
+          })
+    }) 
+     .catch(err => console.error('Error fetching records:', err));
+}
+
 </script>
 </body>
 </html>

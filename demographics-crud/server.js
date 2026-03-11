@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}))
+app.use(express.json());
 
 app.listen(PORT,() => {
     console.log(`Server is running on port http://localhost:${PORT}`);
@@ -17,8 +18,8 @@ db.run(`
     firstName TEXT,
     lastName TEXT,
     age INTEGER,
-    email TEXT
-    gender TEXT
+    email TEXT,
+    gender TEXT,
     city TEXT)
     `);
 
@@ -40,7 +41,7 @@ app.get('/api/demographics', (req,res) => {
 });
 
 //update endpoint
-app.put('api/demographics/id', (req,res) => {
+app.put('/api/demographics/:id', (req,res) => {
     const {id} = req.params;
     const{firstName,lastName,age,email,gender,city} = req.body;
     const query = `
@@ -52,9 +53,11 @@ app.put('api/demographics/id', (req,res) => {
 });
 
 //delete endpoint
-app.delete('/api/demographic/:id', (req,res) =>{
+app.delete('/api/demographics/:id', (req,res) =>{
     const{id} = req.params;
     db.run('DELETE FROM demographics WHERE id = ?', id, function(err) { if (err) return res.status(500).json({error:err.message});
   res.json({message: 'Record deleted successfully'})
     });
 });
+
+
