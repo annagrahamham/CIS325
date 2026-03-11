@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Demographics Input</title>
+    </head>
+    <body>
+        <form id="demographicsPage">
+        <h1>Demographics</h1>
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name ="firstName">
+        <br>
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name ="lastName">
+        <br>
+        <label for="age">Age:</label> 
+        <input type="number" id="age" name ="age">
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name ="email">
+        <br>
+        <label for="gender">Gender:</label>
+        <input type="text" id="gender" name ="gender">
+        <br>
+        <label for="city">City:</label>
+        <input type="text" id="city" name ="city">
+        <br>
+        <button type="button" onclick="submitInfo()">Submit Info</button>
+</form>
+<script>
+    //add validation to the form
+    //list records on page
+    function submitInfo(){
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const age = document.getElementById('age').value;
+        const email = document.getElementById('email').value;
+        const gender = document.getElementById('gender').value;
+        const city = document.getElementById('city').value;
+        fetch('/demographics', {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `firstName=${firstName}&lastName=${lastName}&age=${age}&email=${email}&gender=${gender}&city=${city}`,
+        })
+        .then(response => response.json())
+        .then(data =>{
+            if(data.success) {
+                alert('Demographics information submitted successfully.');
+            }else{
+                alert('Failed to submit demographics information.');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+        })
+    }
+</script>
+</body>
+</html>
